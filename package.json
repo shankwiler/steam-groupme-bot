@@ -1,0 +1,19 @@
+{
+  "name": "steam-groupme-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shankwiler/steam-groupme-bot.git"
+  },
+  "author": "Kyle Shankwiler",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shankwiler/steam-groupme-bot/issues"
+  },
+  "homepage": "https://github.com/shankwiler/steam-groupme-bot#readme"
+}

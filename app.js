@@ -1,6 +1,5 @@
 'use strict'
 const https = require('https')
-const config = require('./config.js')
 
 class SteamListener {
   constructor(steamKey, steamIds, callback) {
@@ -70,7 +69,7 @@ class GroupmeMessager {
       console.log(e)
     })
     req.write(String.raw`{"text": "${this.createMessage(playing)}", "bot_id": "${this.botID}"`)
-    req.end();
+    req.end()
   }
 }
 
@@ -115,8 +114,14 @@ class Controller {
   }
 }
 
-new Controller(
-  config['steamKey'],
-  config['steamIds'],
-  config['gameId'],
-  config['botId']).begin()
+const steamKey = process.env.STEAM_KEY
+const steamIds = process.env.STEAM_IDS
+const gameId = process.env.GAME_ID
+const botId = process.env.BOT_ID
+
+if (!steamKey || !steamIds || !gameId || !botId) {
+  console.log(process.env)
+  throw 'Environment variables not set'
+}
+
+new Controller(steamKey, steamIds, gameId, botId).begin()
