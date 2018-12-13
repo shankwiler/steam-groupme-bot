@@ -1,6 +1,10 @@
 'use strict'
 const https = require('https')
 
+function equalSets(a, b) {
+  return a.size === b.size && [...a].every(e => b.has(e))
+}
+
 class SteamListener {
   constructor(steamKey, steamIds, callback) {
     this.callback = callback
@@ -92,11 +96,16 @@ class Controller {
     this.gameId = gameId
     this.onlinePlayers = new OnlinePlayers()
     this.groupmeMessager = new GroupmeMessager(botId)
+    this.previousMessagePlayers = new Set()
     this.steamListener = new SteamListener(steamKey, steamIDs, (json) => {
       let playing = this.getUsersPlaying(json)
       let newPlaying = this.onlinePlayers.refreshOnline(playing)
-      if (newPlaying.size > 0) {
+      if (newPlaying.size > 0 && !equalSets(this.previousMessagePlayers, newPlaying)) {
         this.groupmeMessager.sendPlayingMessage(playing)
+        // Quick fix to prevent spamming messages - should nest this line in a callback
+        // to the above message. also, race conditions need to be handled above, in the
+        // case of many messages trying to be sent at once. This fix will work for now.
+        this.previousMessagePlayers = playing
       }
     })
   }
