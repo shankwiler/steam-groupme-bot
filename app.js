@@ -44,8 +44,8 @@ class GroupmeMessager {
   }
 
   createMessage(playing) {
-    let message = playing.join(', ')
-    if (playing.length < 2) {
+    let message = [...playing].sort().join(', ')
+    if (playing.size < 2) {
       message += ' is '
     }
     else {
@@ -83,7 +83,7 @@ class OnlinePlayers {
   }
 
   refreshOnline(online) {
-    let newOnlinePlayers = new Set(online.filter((player) => {
+    let newOnlinePlayers = new Set([...online].filter((player) => {
       return !this.online.has(player)
     }))
     this.online = new Set(online)
@@ -100,7 +100,7 @@ class Controller {
     this.steamListener = new SteamListener(steamKey, steamIDs, (json) => {
       let playing = this.getUsersPlaying(json)
       let newPlaying = this.onlinePlayers.refreshOnline(playing)
-      if (newPlaying.size > 0 && !equalSets(this.previousMessagePlayers, newPlaying)) {
+      if (newPlaying.size > 0 && !equalSets(this.previousMessagePlayers, playing)) {
         this.groupmeMessager.sendPlayingMessage(playing)
         // Quick fix to prevent spamming messages - should nest this line in a callback
         // to the above message. also, race conditions need to be handled above, in the
@@ -111,11 +111,11 @@ class Controller {
   }
 
   getUsersPlaying(json) {
-    return json['response']['players'].filter((player) => {
+    return new Set(json['response']['players'].filter((player) => {
         return player['gameid'] === this.gameId
       }).map((player) => {
         return player['personaname']
-      })
+      }))
   }
 
   begin() {
