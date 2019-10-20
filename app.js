@@ -38,7 +38,7 @@ class SteamListener {
   }
 }
 
-class GroupmeMessager {
+class GroupmeMessenger {
   constructor(botID) {
     this.botID = botID
   }
@@ -95,13 +95,13 @@ class Controller {
   constructor(steamKey, steamIDs, gameId, botId) {
     this.gameId = gameId
     this.onlinePlayers = new OnlinePlayers()
-    this.groupmeMessager = new GroupmeMessager(botId)
+    this.groupmeMessenger = new GroupmeMessenger(botId)
     this.previousMessagePlayers = new Set()
     this.steamListener = new SteamListener(steamKey, steamIDs, (json) => {
       let playing = this.getUsersPlaying(json)
       let newPlaying = this.onlinePlayers.refreshOnline(playing)
       if (newPlaying.size > 0 && !equalSets(this.previousMessagePlayers, playing)) {
-        this.groupmeMessager.sendPlayingMessage(playing)
+        this.groupmeMessenger.sendPlayingMessage(playing)
         // Quick fix to prevent spamming messages - should nest this line in a callback
         // to the above message. also, race conditions need to be handled above, in the
         // case of many messages trying to be sent at once. This fix will work for now.
